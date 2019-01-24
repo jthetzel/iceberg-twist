@@ -1,0 +1,95 @@
+debug: 115200
+modem: 9600?
+main: 9600
+sensor: 57600
+
+* Requirements
+- ask Trevor Stuber if need any cables
+- add check for start and end bytes
+- Ask Karl Tuff if we need more cable
+
+- Power on system
+- Sensor transmists
+- Shutdown
+
+- Sleep for 20 minutes
+- Wait for signal for 30 minutes, if not, start transmitting
+- Don't send at 5 hz, send at 1 hz
+- Drop unneeded columns
+- send gps every 5 minutes
+- get system time at startup
+- shutdown after 100 mb
+
+- time to 1301, about 40 hours
+
+- 6.4 kb maximum message size
+- new message name: sendImuChunk
+
+- Sensor: LPMS-URS2 LP-RESEARCH rs232 usb
+
+- 658 mamps modem transmitting
+- transmit a message every four minutes,
+
+- battery life not money is limiting factor
+- include gps every broadcast
+
+* Jan
+- Change input to seven.
+- Plus one counter (total of eight)
+- Used to be 25
+
+- timestamp, position, counter
+
+* Useful examples
+- https://bitbucket.org/lpresearch/lpsensorpy/src/master/lpmslib/LpmsB.py
+- waits specified seconds using timer and event queue
+function waitSeconds(secs)
+  local timer = sys.timer.create()
+  timer:arm(secs * 10)
+  local q = sched.createEventQ(1, '_TIMER', timer)
+  q:wait(-1)
+end
+
+- provided delay function
+sched.delay(0)
+
+- buffers
+-- create the buffer from the string
+local buf = sys.buffer.create(myString)
+
+-- retrieve data from it
+local temp1 = buf:getBits(4)
+local temp2 = buf:getBits(32)
+local temp3 = buf:getBits(4)
+
+- file io
+-- open file for reading
+local fHandle = io.open(svcmgr.dataPath() .. "/myData", "r+")
+
+-- get the data (20 bytes)
+local data = fHandle:read(20)
+
+-- set up the buffer
+local buf = sys.buffer.create(data)
+
+-- get individual data items
+local temp1 = buf:getBits(24)
+local temp2 = buf:getBits(25)
+
+- serial open
+sys.modbus.open(id, mode, baud, parity, plcAddr)
+(id is RS232, RS232aux, or RS-485)
+(mode is MODE_RTU or MODE_ASCII, rtu is 8 bits ascii is 7 bits)
+(baud default 9600)
+(parity default PARITY_EVEN)
+(plcAddr default false)
+
+local handle, error = sys.modbus.open(sys.modbus.RS485, sys.modbus.MODE_RTU)
+local handle, error = sys.modbus.open(sys.modbus.RS232, sys.modbus.MODE_ASCII, 19200, sys.modbus.PARITY_NONE)
+handle.close()
+
+? handle.readByte()
+? rs232main vs rs232aux
+? handle.getFrame(len, timeout)
+? handle.getLine(timeout) # retrieve delimited line
+? handle.setBaud()
